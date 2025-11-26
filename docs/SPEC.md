@@ -373,7 +373,7 @@ Error: Failed to write output: permission denied
 }
 ```
 
-**重要**: `test/fixtures/invalid.json` は意図的に不正なJSON構文を持つテストフィクスチャのため、`overrides` で除外します。
+**重要**: `test/fixtures/invalid.json` は意図的に不正な JSON 構文を持つテストフィクスチャのため、`overrides` で除外します。
 
 ### tsup.config.ts ビルド設定
 
@@ -514,7 +514,7 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
    - 不正な JSON 構造(配列など)
    - ファイル書き込み権限エラー
 
-   **注**: `invalid.json` は意図的にカンマ抜けの不正なJSONで、JSONパースエラーのテストに使用。Biomeの`overrides`設定で除外。
+   **注**: `invalid.json` は意図的にカンマ抜けの不正な JSON で、JSON パースエラーのテストに使用。Biome の`overrides`設定で除外。
 
 4. **変数名生成**
    - 特殊文字を含むスタック名
@@ -559,7 +559,7 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 
 ### GitHub Actions ワークフロー
 
-プロジェクトは **npm Trusted Publishing (OIDC)** を使用して npmjs に公開します。従来のNPM_TOKENは不要です。
+プロジェクトは **npm Trusted Publishing (OIDC)** を使用して npmjs に公開します。従来の NPM_TOKEN は不要です。
 
 #### 公開ワークフロー (`.github/workflows/publish.yml`)
 
@@ -569,8 +569,8 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"      # 通常リリース: v1.2.3
-      - "v[0-9]+.[0-9]+.[0-9]+-*"    # プレリリース: v1.2.3-rc.1
+      - "v[0-9]+.[0-9]+.[0-9]+" # 通常リリース: v1.2.3
+      - "v[0-9]+.[0-9]+.[0-9]+-*" # プレリリース: v1.2.3-rc.1
 
 concurrency:
   group: publish-${{ github.ref }}
@@ -578,12 +578,12 @@ concurrency:
 
 jobs:
   publish:
-    if: github.repository_owner == github.actor  # セキュリティ: オーナーのみ実行可
+    if: github.repository_owner == github.actor # セキュリティ: オーナーのみ実行可
     runs-on: ubuntu-latest
-    environment: npmjs  # GitHub Environment設定が必要
+    environment: npmjs # GitHub Environment設定が必要
     permissions:
       contents: read
-      id-token: write  # OIDC認証に必須
+      id-token: write # OIDC認証に必須
     steps:
       - uses: actions/checkout@v6
         with:
@@ -593,7 +593,7 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
-          token: ""  # 空: OIDC使用を強制
+          token: "" # 空: OIDC使用を強制
 
       - uses: pnpm/action-setup@v4
         with:
@@ -621,7 +621,7 @@ jobs:
 #### 重要な設定ポイント
 
 1. **GitHub Environment**: リポジトリ設定で `npmjs` 環境を作成
-2. **npm設定**: npmjs.com で Trusted Publishing を有効化
+2. **npm 設定**: npmjs.com で Trusted Publishing を有効化
 3. **OIDC**: `id-token: write` 権限が必須
 4. **セキュリティ**: `github.repository_owner == github.actor` で所有者のみ実行
 5. **トークン不要**: `NODE_AUTH_TOKEN` は設定しない(空文字列)
@@ -640,9 +640,10 @@ npm version 1.0.0-rc.1
 git push --follow-tags
 ```
 
-**注意**: 
+**注意**:
+
 - `npm version` コマンドで自動的に git tag が作成されます
-- `--follow-tags` でタグも同時にpushされます
+- `--follow-tags` でタグも同時に push されます
 - タグ形式 `v*.*.*` にマッチすると GitHub Actions が自動実行します
 
 ## ユースケース
