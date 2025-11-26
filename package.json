@@ -1,6 +1,6 @@
 {
 	"name": "@heiwa4126/cdk2env",
-	"version": "0.0.3-alpha.1",
+	"version": "0.0.3",
 	"description": "Convert AWS CDK outputs.json to shell-sourceable export file. CLI tool and library with dual ESM/CJS support.",
 	"type": "module",
 	"main": "./dist/index.cjs",
