@@ -13,7 +13,7 @@
 		}
 	},
 	"bin": {
-		"heiwa4126-cdk2env": "./dist/main.js"
+		"heiwa4126-cdk2env": "dist/main.js"
 	},
 	"files": [
 		"dist/**/*.js",
