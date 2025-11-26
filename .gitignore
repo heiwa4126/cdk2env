@@ -240,6 +240,3 @@ tmp
 examples/temp/
 test/temp/
 var/
-
-# Invalid test fixture (intentionally malformed JSON)
-test/fixtures/invalid.json
