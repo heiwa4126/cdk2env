@@ -1,0 +1,73 @@
+{
+	"name": "@heiwa4126/cdk2env",
+	"version": "0.0.3",
+	"description": "TypeScript hello world library with dual ES modules/CommonJS support. Features GitHub Actions trusted publishing to npmjs with Sigstore attestation.",
+	"type": "module",
+	"main": "./dist/hello.cjs",
+	"types": "./dist/hello.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/hello.d.ts",
+			"import": "./dist/hello.js",
+			"require": "./dist/hello.cjs"
+		}
+	},
+	"bin": {
+		"heiwa4126-cdk2env": "./dist/main.js"
+	},
+	"files": [
+		"dist/**/*.js",
+		"dist/**/*.cjs",
+		"dist/**/*.d.ts",
+		"!dist/**/*.map"
+	],
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest run",
+		"test:run": "vitest run",
+		"test:watch": "vitest",
+		"clean": "rm -rf dist",
+		"prepublishOnly": "pnpm run lint && pnpm run test && pnpm run clean && pnpm run build && pnpm run smoke-test",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"format:full": "pnpm pkg fix && biome format --write . && dprint fmt && textlint --fix \"**/*.md\"",
+		"smoke-test": "node examples/ex1.mjs && node examples/ex2.cjs && tsx examples/ex3.ts && node dist/main.js",
+		"prepack": "clean-publish-scripts -c",
+		"postpack": "clean-publish-scripts -r"
+	},
+	"keywords": [
+		"hello-world",
+		"example",
+		"demo",
+		"typescript",
+		"esm",
+		"commonjs",
+		"cli",
+		"learning",
+		"sigstore",
+		"trusted-publishing",
+		"github-actions"
+	],
+	"author": "heiwa4126 <heiwa4126@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/heiwa4126/heiwa4126-cdk2env.git"
+	},
+	"bugs": {
+		"url": "https://github.com/heiwa4126/heiwa4126-cdk2env/issues"
+	},
+	"homepage": "https://github.com/heiwa4126/heiwa4126-cdk2env#readme",
+	"license": "MIT",
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.7",
+		"@heiwa4126/clean-publish-scripts": "^0.0.1",
+		"@types/node": "^24.10.1",
+		"tsup": "^8.5.1",
+		"tsx": "^4.20.6",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.14"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}
