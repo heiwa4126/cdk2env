@@ -1,4 +1,4 @@
-# cdk-outputs-to-shell パッケージ仕様書
+# cdk2env パッケージ仕様書
 
 ## 概要
 
@@ -6,29 +6,30 @@ AWS CDK の`cdk deploy`コマンドで生成される`outputs.json`ファイル�
 
 ## パッケージ情報
 
-- **パッケージ名**: `cdk-outputs-to-shell`
+- **パッケージ名**: `@heiwa4126/cdk2env`
 - **バージョン**: `1.0.0`
 - **説明**: Convert AWS CDK outputs.json to shell-sourceable export file
 - **ライセンス**: MIT
 - **Node.js バージョン**: `>=18.0.0`
 - **タイプ**: ESM (ES Modules)
+- **ビルド**: TypeScript → tsup → ESM (`.js`) + CommonJS (`.cjs`)
 
 ## インストール方法
 
 ### グローバルインストール
 
 ```bash
-npm install -g cdk-outputs-to-shell
+npm install -g @heiwa4126/cdk2env
 # または
-pnpm add -g cdk-outputs-to-shell
+pnpm add -g @heiwa4126/cdk2env
 ```
 
 ### プロジェクトローカルインストール
 
 ```bash
-npm install --save-dev cdk-outputs-to-shell
+npm install --save-dev @heiwa4126/cdk2env
 # または
-pnpm add -D cdk-outputs-to-shell
+pnpm add -D @heiwa4126/cdk2env
 ```
 
 ## 使用方法
@@ -37,13 +38,21 @@ pnpm add -D cdk-outputs-to-shell
 
 ```bash
 # デフォルト設定で実行 (var/outputs.json → var/outputs.sh)
-cdk-outputs-to-shell
+cdk2env
 
 # 入力ファイルのみ指定
-cdk-outputs-to-shell path/to/outputs.json
+cdk2env path/to/outputs.json
 
 # 入力と出力を両方指定
-cdk-outputs-to-shell path/to/outputs.json path/to/exports.sh
+cdk2env path/to/outputs.json path/to/exports.sh
+
+# ヘルプ表示
+cdk2env --help
+cdk2env -h
+
+# バージョン表示
+cdk2env --version
+cdk2env -V
 ```
 
 ### package.json スクリプト
@@ -51,10 +60,37 @@ cdk-outputs-to-shell path/to/outputs.json path/to/exports.sh
 ```json
 {
   "scripts": {
-    "cdk:outputs": "cdk-outputs-to-shell",
-    "cdk:outputs:custom": "cdk-outputs-to-shell cdk.out/outputs.json env.sh"
+    "cdk:outputs": "cdk2env",
+    "cdk:outputs:custom": "cdk2env cdk.out/outputs.json env.sh"
   }
 }
+```
+
+## CLI 引数仕様
+
+### 位置引数
+
+- **第 1 引数** (オプション): 入力 JSON ファイルパス
+  - 省略時: `var/outputs.json`
+- **第 2 引数** (オプション): 出力シェルファイルパス
+  - 省略時: 入力ファイルの拡張子を `.sh` に変更
+  - 例: `var/outputs.json` → `var/outputs.sh`
+
+### オプションフラグ
+
+| オプション  | 短縮形 | 説明                         |
+| ----------- | ------ | ---------------------------- |
+| `--help`    | `-h`   | 使用方法を表示して終了       |
+| `--version` | `-V`   | バージョン番号を表示して終了 |
+
+### 引数の優先順位
+
+オプションフラグは位置引数より優先されます:
+
+```bash
+cdk2env --help path/to/file.json  # --helpが優先され、使用方法を表示
+cdk2env --version                  # バージョンを表示
+cdk2env path.json --help           # --helpが優先
 ```
 
 ### 生成されたファイルの使用方法
@@ -147,8 +183,33 @@ export CDK_ANOTHERSTACK_DATABASEURL='postgres://user:pass@host:5432/db'
   }
 }
 
-// 出力（安全にエスケープ済み）
+// 出力(安全にエスケープ済み)
 export CDK_STACK_MESSAGE='It'\''s a test! $(whoami)'
+```
+
+## ログ出力仕様
+
+### 標準出力(stdout)
+
+- **正常終了時**: 何も出力しない(silent)
+- **エラー時のみ**: エラーメッセージを出力
+
+### ログレベル
+
+現バージョンでは詳細ログ機能は実装せず、エラー時のみ出力します。
+
+```bash
+# 正常終了の例
+$ cdk2env var/outputs.json var/outputs.sh
+$ echo $?
+0
+# ← 何も出力されない
+
+# エラー時の例
+$ cdk2env missing.json
+Error: Input JSON not found: missing.json
+$ echo $?
+1
 ```
 
 ## エラーハンドリング
@@ -180,53 +241,122 @@ Failed to write output: permission denied
 ## パッケージ構成
 
 ```
-cdk-outputs-to-shell/
+@heiwa4126/cdk2env/
 ├── package.json
 ├── README.md
 ├── LICENSE
-├── .gitignore
-├── .npmignore
-├── bin/
-│   └── cli.mjs              # CLIエントリーポイント
+├── biome.jsonc              # Biome設定(linting/formatting)
+├── tsconfig.json            # TypeScript設定
+├── tsup.config.ts           # tsupビルド設定
+├── vite.config.ts           # Vitestテスト設定
 ├── src/
-│   ├── index.mjs            # メイン処理
-│   └── utils.mjs            # ユーティリティ関数
-└── test/
-    ├── index.test.mjs       # テストファイル
-    └── fixtures/
-        ├── sample1.json     # テスト用JSONファイル
-        └── expected1.sh     # 期待される出力
+│   ├── main.ts              # CLIエントリーポイント(ESM)
+│   ├── index.ts             # ライブラリAPI (exportされる主要関数)
+│   └── utils.ts             # ユーティリティ関数
+├── test/
+│   ├── index.test.ts        # テストファイル
+│   └── fixtures/
+│       ├── sample1.json     # テスト用JSONファイル
+│       └── expected1.sh     # 期待される出力
+├── dist/                    # ビルド出力(tsupで生成)
+│   ├── main.js              # CLI (ESM)
+│   ├── index.js             # ライブラリ (ESM)
+│   ├── index.cjs            # ライブラリ (CommonJS)
+│   ├── index.d.ts           # 型定義
+│   └── utils.*              # ユーティリティ(各形式)
+└── examples/
+    ├── ex-esm.mjs           # ESM使用例
+    ├── ex-cjs.cjs           # CommonJS使用例
+    └── ex-ts.ts             # TypeScript使用例
 ```
 
 ## package.json の主要設定
 
 ```json
 {
-  "name": "cdk-outputs-to-shell",
+  "name": "@heiwa4126/cdk2env",
   "version": "1.0.0",
   "description": "Convert AWS CDK outputs.json to shell-sourceable export file",
   "type": "module",
   "bin": {
-    "cdk-outputs-to-shell": "./bin/cli.mjs"
+    "cdk2env": "./dist/main.js"
   },
   "exports": {
-    ".": "./src/index.mjs"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
   },
-  "files": ["bin/", "src/", "README.md", "LICENSE"],
+  "files": ["dist/", "README.md", "LICENSE"],
   "engines": {
     "node": ">=18.0.0"
   },
   "keywords": ["aws-cdk", "cdk", "outputs", "shell", "bash", "export", "environment-variables", "cli"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/cdk-outputs-to-shell.git"
+    "url": "https://github.com/heiwa4126/cdk2env.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/cdk-outputs-to-shell/issues"
+    "url": "https://github.com/heiwa4126/cdk2env/issues"
   },
-  "homepage": "https://github.com/yourusername/cdk-outputs-to-shell#readme",
-  "author": "Your Name",
-  "license": "MIT"
+  "homepage": "https://github.com/heiwa4126/cdk2env#readme",
+  "author": "heiwa4126",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "@types/node": "^20.0.0",
+    "tsup": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}
+```
+
+### tsup.config.ts ビルド設定
+
+```typescript
+import { defineConfig } from "tsup";
+
+export default defineConfig({
+  entry: {
+    main: "src/main.ts", // CLI
+    index: "src/index.ts", // Library API
+  },
+  format: ["esm", "cjs"], // ESM + CommonJS
+  dts: true, // 型定義生成
+  clean: true, // ビルド前にdist/をクリア
+  sourcemap: true,
+  splitting: false,
+  treeshake: true,
+  outDir: "dist",
+});
+```
+
+### TypeScript 設定のポイント
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext", // 最新のNode.jsモジュール解決
+    "moduleResolution": "nodenext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true, // JSONファイルをimport可能に
+    "outDir": "./dist",
+    "rootDir": "./src"
+  }
 }
 ```
 
@@ -234,22 +364,76 @@ cdk-outputs-to-shell/
 
 ### API として使用する場合
 
+#### ESM (type: "module")
+
 ```javascript
-import { convertOutputsToShell } from "cdk-outputs-to-shell";
+import { convertOutputsToShell } from "@heiwa4126/cdk2env";
+
+// 基本的な使用例
+await convertOutputsToShell({
+  inputPath: "var/outputs.json",
+  outputPath: "var/outputs.sh",
+});
+
+// カスタムプレフィックス
+await convertOutputsToShell({
+  inputPath: "custom/path.json",
+  outputPath: "custom/output.sh",
+  prefix: "APP_", // デフォルト: 'CDK_'
+});
+```
+
+**注意**: ライブラリ API はエラー時に例外を throw します。CLI とは異なり、進捗ログは出力しません。
+
+#### CommonJS
+
+```javascript
+const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 
 // 使用例
 await convertOutputsToShell({
   inputPath: "var/outputs.json",
   outputPath: "var/outputs.sh",
 });
+```
 
-// カスタムオプション
-await convertOutputsToShell({
-  inputPath: "custom/path.json",
-  outputPath: "custom/output.sh",
-  prefix: "APP_", // デフォルト: 'CDK_'
-  onProgress: (message) => console.log(message),
-});
+#### TypeScript
+
+```typescript
+import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
+
+const options: ConvertOptions = {
+  inputPath: "var/outputs.json",
+  outputPath: "var/outputs.sh",
+  prefix: "CDK_",
+};
+
+try {
+  await convertOutputsToShell(options);
+  console.log("Conversion successful");
+} catch (error) {
+  console.error("Conversion failed:", error.message);
+  process.exit(1);
+}
+```
+
+### 型定義
+
+```typescript
+export interface ConvertOptions {
+  /** 入力JSONファイルのパス */
+  inputPath: string;
+  /** 出力シェルファイルのパス */
+  outputPath: string;
+  /** 環境変数のプレフィックス (デフォルト: 'CDK_') */
+  prefix?: string;
+}
+
+/**
+ * CDK outputs.json をシェルスクリプト形式に変換
+ * @throws {Error} ファイルの読み書きやJSON解析でエラーが発生した場合
+ */
+export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 ```
 
 ## テスト要件
@@ -283,8 +467,10 @@ await convertOutputsToShell({
 
 ### テストフレームワーク
 
-- Node.js 標準の`node:test`モジュールを使用
-- または、Vitest、Jest 等のテストフレームワーク
+- **Vitest**: 高速な TypeScript テストフレームワーク
+  - グローバル API 有効化 (`globals: true`)
+  - TypeScript ネイティブサポート
+  - `vite.config.ts`で設定
 
 ## 依存関係
 
@@ -297,18 +483,32 @@ await convertOutputsToShell({
 ```json
 {
   "devDependencies": {
+    "@biomejs/biome": "latest",
     "@types/node": "^20.0.0",
-    "vitest": "^1.0.0"
+    "tsup": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
   }
 }
 ```
 
+### ビルドツールチェーン
+
+- **TypeScript**: 型安全なコード記述
+- **tsup**: 高速な TypeScript バンドラー(ESM/CJS 両対応)
+- **Biome**: 統合 Linter/Formatter(ESLint + Prettier 代替)
+- **Vitest**: 高速テストフレームワーク
+
 ## CI/CD
 
-### GitHub Actions ワークフロー例
+### GitHub Actions ワークフロー
+
+プロジェクトは **npm Trusted Publishing** を使用して npmjs に公開します。
+
+#### テストワークフロー (`.github/workflows/test.yml`)
 
 ```yaml
-name: Test and Publish
+name: Test
 
 on:
   push:
@@ -328,11 +528,29 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
+      - run: npm run build
       - run: npm test
+      - run: npm run lint
+```
 
+#### 公開ワークフロー (`.github/workflows/publish.yml`)
+
+```yaml
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*.*.*" # 通常リリース: v1.2.3
+      - "v*.*.*-*" # プレリリース: v1.2.3-rc.1
+
+permissions:
+  contents: read
+  id-token: write # OIDC認証に必要
+
+jobs:
   publish:
-    needs: test
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.repository_owner == github.actor
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -341,9 +559,31 @@ jobs:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
       - run: npm ci
-      - run: npm publish
+      - run: npm run build
+      - run: npm test
+
+      # プレリリースの場合は --tag dev を追加
+      - name: Publish to npm
+        run: |
+          if [[ "${{ github.ref_name }}" == *"-"* ]]; then
+            npm publish --provenance --access public --tag dev
+          else
+            npm publish --provenance --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+### 公開方法
+
+```bash
+# 通常リリース (latest tag)
+git tag v1.0.0
+git push origin v1.0.0
+
+# プレリリース (dev tag)
+git tag v1.0.0-rc.1
+git push origin v1.0.0-rc.1
 ```
 
 ## ユースケース
@@ -399,7 +639,8 @@ CMD ["node", "server.js"]
 
 ### v1.x で実装予定
 
-- [ ] TypeScript 型定義ファイルの提供
+- [x] TypeScript 型定義ファイルの提供 (tsup で自動生成)
+- [x] ESM/CommonJS 両対応
 - [ ] 詳細なロギングオプション (`--verbose`, `--quiet`)
 - [ ] プレフィックスのカスタマイズオプション (`--prefix APP_`)
 - [ ] JSON 以外の出力形式サポート (`.env`形式、YAML 形式)

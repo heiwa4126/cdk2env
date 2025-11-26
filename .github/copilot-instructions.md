@@ -2,16 +2,19 @@
 
 ## Project Overview
 
-This is a TypeScript library (`@heiwa4126/cdk2env`) that demonstrates modern npm packaging with dual ESM/CJS support and automated trusted publishing to npmjs via GitHub Actions with Sigstore attestation. The library exports a simple `hello()` function and provides a CLI tool.
+This is a TypeScript library (`@heiwa4126/cdk2env`) that converts AWS CDK `outputs.json` files to shell-sourceable environment variable export files (`.sh`). It provides both a CLI tool (`cdk2env`) and a programmatic API with dual ESM/CJS support, automated trusted publishing to npmjs via GitHub Actions with Sigstore attestation.
+
+**Full specification**: See `docs/SPEC.md`
 
 ## Architecture & Build System
 
 **Dual Module Support Pattern:**
 
 - Uses `tsup` for bundling with both ESM (`.js`) and CJS (`.cjs`) outputs
-- `package.json` exports field provides dual compatibility: `"import": "./dist/hello.js"` and `"require": "./dist/hello.cjs"`
+- `package.json` exports field provides dual compatibility for library API
 - TypeScript is configured with `"module": "nodenext"` for modern module resolution
 - CLI entry point (`src/main.ts`) uses ESM imports with `.js` extension for compatibility
+- CLI binary: `cdk2env` (ESM format only)
 
 **Critical Build Flow:**
 
@@ -59,8 +62,14 @@ This project uses npm's trusted publishing feature. The workflow in `.github/wor
 ## File Structure Conventions
 
 - `src/`: TypeScript source files
+  - `main.ts`: CLI entry point
+  - `index.ts`: Library API exports (`convertOutputsToShell()` function)
+  - `utils.ts`: Utility functions (variable name sanitization, shell escaping, etc.)
 - `examples/`: Usage examples for ESM (`.mjs`), CJS (`.cjs`), and TypeScript (`.ts`)
-- `scripts/`: Build utilities (e.g., `clean-pkg.mjs` for package.json cleanup)
+- `test/`: Vitest test files
+  - `test/fixtures/`: Test JSON files and expected shell outputs
+- `docs/`: Documentation
+  - `SPEC.md`: Complete package specification
 - `dist/`: Build output (both `.js` ESM and `.cjs` CommonJS files)
 
 ## Development Commands
@@ -86,3 +95,28 @@ npm pack --dry-run  # Preview package contents
 - The `"type": "module"` in package.json makes this an ESM-first project
 - CLI script requires the shebang `#!/usr/bin/env node` in the built output
 - Never commit npm tokens - this project uses OIDC trusted publishing exclusively
+
+## Core Functionality
+
+**CLI Behavior:**
+- Default paths: `var/outputs.json` → `var/outputs.sh`
+- Silent on success (no output)
+- Errors only to stdout with `Error: ` prefix
+- Exit codes: 0 (success), 1 (error)
+- Supports `--help/-h` and `--version/-V` flags
+
+**Variable Naming Convention:**
+- Prefix: `CDK_` (customizable via API)
+- Format: `CDK_STACKNAME_OUTPUTKEY` (all uppercase)
+- Non-alphanumeric characters → `_`
+- Example: `MyStack.ApiEndpoint` → `CDK_MYSTACK_APIENDPOINT`
+
+**Security:**
+- All values wrapped in single quotes
+- Single quotes in values escaped as `'\''`
+- Shell injection safe
+
+**API vs CLI:**
+- Library API throws exceptions on error
+- CLI catches exceptions and prints to stdout
+- Library API has no logging/progress output
