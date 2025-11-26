@@ -1,6 +1,6 @@
 {
 	"name": "@heiwa4126/cdk2env",
-	"version": "0.0.3",
+	"version": "0.0.0-alpha.0",
 	"description": "TypeScript hello world library with dual ES modules/CommonJS support. Features GitHub Actions trusted publishing to npmjs with Sigstore attestation.",
 	"type": "module",
 	"main": "./dist/hello.cjs",
