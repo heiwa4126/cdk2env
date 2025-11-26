@@ -1,0 +1,11 @@
+{
+	"Stack": {
+		"Message": "It's a test! $(whoami)",
+		"Quote": "She said \"Hello\"",
+		"Path": "/usr/local/bin"
+	},
+	"my-stack-dev": {
+		"bucket.name": "test-bucket",
+		"URL-Address": "https://example.com"
+	}
+}

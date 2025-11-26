@@ -5,50 +5,155 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
 
-TypeScript hello world library with dual ES modules/CommonJS support. Features GitHub Actions trusted publishing to npmjs with Sigstore attestation.
+Convert AWS CDK `outputs.json` to shell-sourceable export file. Provides both CLI tool and programmatic API with dual ESM/CJS support.
+
+## Features
+
+- 🚀 **CLI & Library**: Use as a command-line tool or programmatic API
+- 📦 **Dual Module Support**: Works with both ES Modules and CommonJS
+- 🔒 **Shell-Safe**: Automatic escaping prevents shell injection attacks
+- ⚡ **Zero Dependencies**: Built with Node.js standard library only
+- 📝 **TypeScript**: Full type definitions included
+- ✅ **Well Tested**: Comprehensive test coverage
 
 ## Installation
 
+### Global (CLI)
+
 ```bash
-pnpm add @heiwa4126/cdk2env
+npm install -g @heiwa4126/cdk2env
 # or
-npm install @heiwa4126/cdk2env
+pnpm add -g @heiwa4126/cdk2env
+```
+
+### Local (Library)
+
+```bash
+npm install --save-dev @heiwa4126/cdk2env
+# or
+pnpm add -D @heiwa4126/cdk2env
 ```
 
 ## Usage
 
-### As a library
+### CLI
 
-#### ES Modules (MJS)
+```bash
+# Default: var/outputs.json → var/outputs.sh
+cdk2env
 
-```typescript
-import { hello } from "@heiwa4126/cdk2env";
+# Custom input file
+cdk2env path/to/outputs.json
 
-console.log(hello()); // "Hello!"
+# Custom input and output
+cdk2env path/to/outputs.json path/to/exports.sh
+
+# Show help
+cdk2env --help
+
+# Show version
+cdk2env --version
 ```
 
-#### CommonJS (CJS)
+### Library API
+
+#### ES Modules
+
+```typescript
+import { convertOutputsToShell } from "@heiwa4126/cdk2env";
+
+await convertOutputsToShell({
+  inputPath: "var/outputs.json",
+  outputPath: "var/outputs.sh",
+});
+```
+
+#### CommonJS
 
 ```javascript
-const { hello } = require("@heiwa4126/cdk2env");
+const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 
-console.log(hello()); // "Hello!"
+await convertOutputsToShell({
+  inputPath: "var/outputs.json",
+  outputPath: "var/outputs.sh",
+});
 ```
 
 #### TypeScript
 
 ```typescript
-import { hello } from "@heiwa4126/cdk2env";
+import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
 
-console.log(hello()); // "Hello!"
+const options: ConvertOptions = {
+  inputPath: "var/outputs.json",
+  outputPath: "var/outputs.sh",
+  prefix: "APP_", // Custom prefix (default: 'CDK_')
+};
+
+await convertOutputsToShell(options);
 ```
 
-### As a CLI tool
-
-After installation, you can use the CLI command:
+## Example Workflow
 
 ```bash
-heiwa4126-cdk2env
+# 1. Deploy CDK and generate outputs
+cdk deploy --outputs-file var/outputs.json
+
+# 2. Convert to shell format
+cdk2env
+
+# 3. Source the generated file
+source var/outputs.sh
+
+# 4. Use environment variables
+echo $CDK_MYSTACK_APIENDPOINT
+curl $CDK_MYSTACK_APIENDPOINT/health
+```
+
+## Input/Output Format
+
+### Input: CDK outputs.json
+
+```json
+{
+  "MyStack": {
+    "ApiEndpoint": "https://abc123.execute-api.us-east-1.amazonaws.com",
+    "BucketName": "my-bucket-abc123"
+  }
+}
+```
+
+### Output: Shell export file
+
+```bash
+#!/usr/bin/env bash
+# Auto-generated from CDK outputs.json. Do not edit manually.
+
+export CDK_MYSTACK_APIENDPOINT='https://abc123.execute-api.us-east-1.amazonaws.com'
+export CDK_MYSTACK_BUCKETNAME='my-bucket-abc123'
+```
+
+## Variable Naming Convention
+
+- Prefix: `CDK_` (customizable via API)
+- Format: `CDK_STACKNAME_OUTPUTKEY` (uppercase)
+- Special characters → `_`
+- Example: `MyStack.ApiEndpoint` → `CDK_MYSTACK_APIENDPOINT`
+
+## Security
+
+All values are wrapped in single quotes with proper escaping:
+
+```javascript
+// Input
+{
+  "Stack": {
+    "Message": "It's a test! $(whoami)"
+  }
+}
+
+// Output (safe)
+export CDK_STACK_MESSAGE='It'\''s a test! $(whoami)'
 ```
 
 ## Development
@@ -57,22 +162,25 @@ heiwa4126-cdk2env
 # Install dependencies
 pnpm install
 
-# lint, test, clean, build, pack and smoke test (without publishing)
+# Build
+pnpm run build
+
+# Test
+pnpm test
+
+# Lint
+pnpm run lint
+
+# Format
+pnpm run format
+
+# All checks (lint + test + build + smoke-test)
 pnpm run prepublishOnly
 ```
 
-## Build Output
+## Documentation
 
-The project builds to both ES modules and CommonJS formats in a flat structure:
-
-- `dist/` - Both ES modules (`.js`) and CommonJS (`.cjs`) files
-
-## Scripts
-
-- `pnpm run build` - Build both ESM and CJS versions
-- `pnpm run test:watch` - Run tests in watch mode
-- `pnpm test` - Run tests once
-- `pnpm run clean` - Remove build artifacts
+See [docs/SPEC.md](docs/SPEC.md) for complete specification.
 
 ## License
 

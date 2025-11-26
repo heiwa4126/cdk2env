@@ -235,3 +235,11 @@ tags
 tmp/*
 *.tmp
 tmp
+
+# Generated files from examples and tests
+examples/temp/
+test/temp/
+var/
+
+# Invalid test fixture (intentionally malformed JSON)
+test/fixtures/invalid.json

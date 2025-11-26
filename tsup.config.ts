@@ -1,15 +1,15 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-	entry: ["src/main.ts", "src/index.ts"],
-	format: ["esm", "cjs"],
-	outDir: "dist",
-	bundle: false,
-	splitting: false,
-	sourcemap: true,
-	clean: true,
-	dts: {
-		resolve: true,
-		entry: ["src/index.ts"],
+	entry: {
+		main: "src/main.ts", // CLI
+		index: "src/index.ts", // Library API
 	},
+	format: ["esm", "cjs"], // ESM + CommonJS
+	dts: true, // Generate type definitions
+	clean: true, // Clean dist/ before build
+	sourcemap: true,
+	splitting: false,
+	treeshake: true,
+	outDir: "dist",
 });
