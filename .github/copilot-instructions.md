@@ -43,6 +43,8 @@ npm run smoke-test  # Tests all three usage patterns (ESM/CJS/TS)
 - Biome handles both formatting and linting (replaces ESLint + Prettier)
 - Line width: 100 characters
 - Strict TypeScript with `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`
+- `test/fixtures/invalid.json` is excluded via `overrides` (intentionally malformed for testing)
+- Biome config uses `overrides[].includes` to disable linting/formatting for specific files
 
 ## Publishing & CI/CD Workflow
 
@@ -68,6 +70,8 @@ This project uses npm's trusted publishing feature. The workflow in `.github/wor
 - `examples/`: Usage examples for ESM (`.mjs`), CJS (`.cjs`), and TypeScript (`.ts`)
 - `test/`: Vitest test files
   - `test/fixtures/`: Test JSON files and expected shell outputs
+    - `invalid.json`: Intentionally malformed JSON for error testing (excluded from Biome)
+  - `test/temp/`: Temporary test output files (gitignored)
 - `docs/`: Documentation
   - `SPEC.md`: Complete package specification
 - `dist/`: Build output (both `.js` ESM and `.cjs` CommonJS files)

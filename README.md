@@ -162,21 +162,31 @@ export CDK_STACK_MESSAGE='It'\''s a test! $(whoami)'
 # Install dependencies
 pnpm install
 
-# Build
+# Build (tsup generates ESM + CJS)
 pnpm run build
 
-# Test
+# Test (vitest)
 pnpm test
+pnpm run test:watch  # Watch mode
 
-# Lint
+# Lint & Format (Biome)
 pnpm run lint
-
-# Format
 pnpm run format
 
-# All checks (lint + test + build + smoke-test)
+# Smoke test (verify all module formats work)
+pnpm run smoke-test
+
+# All checks before publish
 pnpm run prepublishOnly
 ```
+
+### Project Structure
+
+- **Package manager**: pnpm (uses workspace for monorepo-friendly setup)
+- **Build tool**: tsup (fast TypeScript bundler)
+- **Test framework**: vitest (fast, TypeScript-native)
+- **Linter/Formatter**: Biome (ESLint + Prettier replacement)
+- **CI/CD**: GitHub Actions with npm Trusted Publishing (OIDC)
 
 ## Documentation
 

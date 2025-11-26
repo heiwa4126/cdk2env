@@ -248,31 +248,49 @@ Error: Failed to write output: permission denied
 ```
 @heiwa4126/cdk2env/
 ├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
 ├── README.md
 ├── LICENSE
+├── NOTE-ja.md
 ├── biome.jsonc              # Biome設定(linting/formatting)
 ├── tsconfig.json            # TypeScript設定
 ├── tsup.config.ts           # tsupビルド設定
 ├── vite.config.ts           # Vitestテスト設定
+├── .github/
+│   ├── copilot-instructions.md
+│   └── workflows/
+│       └── publish.yml      # npm Trusted Publishing
+├── docs/
+│   └── SPEC.md              # 本仕様書
 ├── src/
 │   ├── main.ts              # CLIエントリーポイント(ESM)
 │   ├── index.ts             # ライブラリAPI (exportされる主要関数)
 │   └── utils.ts             # ユーティリティ関数
 ├── test/
-│   ├── index.test.ts        # テストファイル
-│   └── fixtures/
-│       ├── sample1.json     # テスト用JSONファイル
-│       └── expected1.sh     # 期待される出力
-├── dist/                    # ビルド出力(tsupで生成)
+│   ├── index.test.ts        # 変換機能のテスト
+│   ├── utils.test.ts        # ユーティリティのテスト
+│   ├── fixtures/            # テストデータ
+│   │   ├── sample1.json     # 標準的なCDK outputs
+│   │   ├── empty.json       # 空のoutputs
+│   │   ├── special-chars.json  # 特殊文字を含むデータ
+│   │   ├── invalid.json     # 不正なJSON (意図的、Biomeから除外)
+│   │   └── expected1.sh     # 期待される出力
+│   └── temp/                # テスト実行時の一時ファイル (gitignore)
+├── dist/                    # ビルド出力(tsupで生成、gitignore)
 │   ├── main.js              # CLI (ESM)
 │   ├── index.js             # ライブラリ (ESM)
 │   ├── index.cjs            # ライブラリ (CommonJS)
 │   ├── index.d.ts           # 型定義
-│   └── utils.*              # ユーティリティ(各形式)
+│   ├── index.d.cts          # CommonJS型定義
+│   ├── utils.js
+│   ├── utils.cjs
+│   └── utils.d.ts
 └── examples/
-    ├── ex-esm.mjs           # ESM使用例
-    ├── ex-cjs.cjs           # CommonJS使用例
-    └── ex-ts.ts             # TypeScript使用例
+    ├── ex1.mjs              # ESM使用例
+    ├── ex2.cjs              # CommonJS使用例
+    ├── ex3.ts               # TypeScript使用例
+    └── temp/                # サンプル実行時の一時ファイル (gitignore)
 ```
 
 ## package.json の主要設定
@@ -325,6 +343,37 @@ Error: Failed to write output: permission denied
   }
 }
 ```
+
+### Biome 設定のポイント (biome.jsonc)
+
+```jsonc
+{
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error"
+        // その他のルール...
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "lineWidth": 100
+  },
+  "overrides": [
+    {
+      "includes": ["test/fixtures/invalid.json"],
+      "linter": { "enabled": false },
+      "formatter": { "enabled": false }
+    }
+  ]
+}
+```
+
+**重要**: `test/fixtures/invalid.json` は意図的に不正なJSON構文を持つテストフィクスチャのため、`overrides` で除外します。
 
 ### tsup.config.ts ビルド設定
 
@@ -461,9 +510,11 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 3. **エラー系**
 
    - 存在しないファイル
-   - 無効な JSON
-   - 不正な JSON 構造
+   - 無効な JSON (`test/fixtures/invalid.json` - 意図的に不正な構文)
+   - 不正な JSON 構造(配列など)
    - ファイル書き込み権限エラー
+
+   **注**: `invalid.json` は意図的にカンマ抜けの不正なJSONで、JSONパースエラーのテストに使用。Biomeの`overrides`設定で除外。
 
 4. **変数名生成**
    - 特殊文字を含むスタック名
@@ -508,35 +559,7 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 
 ### GitHub Actions ワークフロー
 
-プロジェクトは **npm Trusted Publishing** を使用して npmjs に公開します。
-
-#### テストワークフロー (`.github/workflows/test.yml`)
-
-```yaml
-name: Test
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 20, 22]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
-      - run: npm run lint
-```
+プロジェクトは **npm Trusted Publishing (OIDC)** を使用して npmjs に公開します。従来のNPM_TOKENは不要です。
 
 #### 公開ワークフロー (`.github/workflows/publish.yml`)
 
@@ -546,50 +569,81 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "v*.*.*" # 通常リリース: v1.2.3
-      - "v*.*.*-*" # プレリリース: v1.2.3-rc.1
+      - "v[0-9]+.[0-9]+.[0-9]+"      # 通常リリース: v1.2.3
+      - "v[0-9]+.[0-9]+.[0-9]+-*"    # プレリリース: v1.2.3-rc.1
 
-permissions:
-  contents: read
-  id-token: write # OIDC認証に必要
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish:
-    if: github.repository_owner == github.actor
+    if: github.repository_owner == github.actor  # セキュリティ: オーナーのみ実行可
     runs-on: ubuntu-latest
+    environment: npmjs  # GitHub Environment設定が必要
+    permissions:
+      contents: read
+      id-token: write  # OIDC認証に必須
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
         with:
-          node-version: 20
-          registry-url: "https://registry.npmjs.org"
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
+          fetch-depth: 1
 
-      # プレリリースの場合は --tag dev を追加
-      - name: Publish to npm
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+          token: ""  # 空: OIDC使用を強制
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - run: pnpm install --frozen-lockfile
+
+      # prepublishOnlyスクリプトでbuild+test実行
+
+      - name: Check if prerelease
+        id: check-prerelease
         run: |
-          if [[ "${{ github.ref_name }}" == *"-"* ]]; then
-            npm publish --provenance --access public --tag dev
+          VERSION=$(npm pkg get version --silent | tr -d '"')
+          if [[ $VERSION == *-* ]]; then
+            echo "tag_option=--tag dev" >> "$GITHUB_OUTPUT"
           else
-            npm publish --provenance --access public
+            echo "tag_option=" >> "$GITHUB_OUTPUT"
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish via OIDC
+        run: npm publish --access public ${{ steps.check-prerelease.outputs.tag_option }}
+        # Trusted publishingでは--provenanceは自動付与
 ```
+
+#### 重要な設定ポイント
+
+1. **GitHub Environment**: リポジトリ設定で `npmjs` 環境を作成
+2. **npm設定**: npmjs.com で Trusted Publishing を有効化
+3. **OIDC**: `id-token: write` 権限が必須
+4. **セキュリティ**: `github.repository_owner == github.actor` で所有者のみ実行
+5. **トークン不要**: `NODE_AUTH_TOKEN` は設定しない(空文字列)
 
 ### 公開方法
 
 ```bash
-# 通常リリース (latest tag)
-git tag v1.0.0
-git push origin v1.0.0
+# 1. package.jsonのversionを更新
+npm version 1.0.0  # または: npm version patch/minor/major
 
-# プレリリース (dev tag)
-git tag v1.0.0-rc.1
-git push origin v1.0.0-rc.1
+# 2. タグ付きでpush (GitHub Actionsが自動実行)
+git push --follow-tags
+
+# プレリリースの場合
+npm version 1.0.0-rc.1
+git push --follow-tags
 ```
+
+**注意**: 
+- `npm version` コマンドで自動的に git tag が作成されます
+- `--follow-tags` でタグも同時にpushされます
+- タグ形式 `v*.*.*` にマッチすると GitHub Actions が自動実行します
 
 ## ユースケース
 
