@@ -37,5 +37,12 @@
 	"formatter": {
 		"enabled": true,
 		"lineWidth": 100
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["test/fixtures/invalid.json"],
+			"linter": { "enabled": false },
+			"formatter": { "enabled": false }
+		}
+	]
 }
