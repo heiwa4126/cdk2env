@@ -192,6 +192,9 @@ export CDK_STACK_MESSAGE='It'\''s a test! $(whoami)'
 ### 標準出力(stdout)
 
 - **正常終了時**: 何も出力しない(silent)
+
+### 標準エラー出力(stderr)
+
 - **エラー時のみ**: エラーメッセージを出力
 
 ### ログレベル
@@ -219,23 +222,25 @@ $ echo $?
 - `0`: 正常終了
 - `1`: エラー発生（ファイルが見つからない、JSON 解析エラー等）
 
-### エラーメッセージ
+### エラーメッセージ形式
+
+すべてのエラーメッセージは `Error: ` プレフィックスで始まり、stderr に出力されます。
 
 ```bash
 # 入力ファイルが存在しない
-Input JSON not found: /path/to/outputs.json
+Error: Input JSON not found: /path/to/outputs.json
 
 # ファイル読み込みエラー
-Failed to read input: permission denied
+Error: Failed to read input: permission denied
 
 # 無効なJSON
-Invalid JSON: Unexpected token } in JSON at position 123
+Error: Invalid JSON: Unexpected token } in JSON at position 123
 
 # JSONのルート構造が不正
-Unexpected JSON root structure (expected object).
+Error: Unexpected JSON root structure (expected object).
 
 # ファイル書き込みエラー
-Failed to write output: permission denied
+Error: Failed to write output: permission denied
 ```
 
 ## パッケージ構成

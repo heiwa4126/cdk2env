@@ -99,24 +99,28 @@ npm pack --dry-run  # Preview package contents
 ## Core Functionality
 
 **CLI Behavior:**
+
 - Default paths: `var/outputs.json` → `var/outputs.sh`
 - Silent on success (no output)
-- Errors only to stdout with `Error: ` prefix
+- Errors only to stderr with `Error: ` prefix
 - Exit codes: 0 (success), 1 (error)
 - Supports `--help/-h` and `--version/-V` flags
 
 **Variable Naming Convention:**
+
 - Prefix: `CDK_` (customizable via API)
 - Format: `CDK_STACKNAME_OUTPUTKEY` (all uppercase)
 - Non-alphanumeric characters → `_`
 - Example: `MyStack.ApiEndpoint` → `CDK_MYSTACK_APIENDPOINT`
 
 **Security:**
+
 - All values wrapped in single quotes
 - Single quotes in values escaped as `'\''`
 - Shell injection safe
 
 **API vs CLI:**
+
 - Library API throws exceptions on error
-- CLI catches exceptions and prints to stdout
+- CLI catches exceptions and prints to stderr
 - Library API has no logging/progress output

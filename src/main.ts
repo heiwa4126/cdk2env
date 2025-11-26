@@ -88,8 +88,8 @@ async function main(): Promise<void> {
 		// Silent on success - no output
 		process.exit(0);
 	} catch (error) {
-		// Print error to stdout with Error: prefix
-		console.log(`Error: ${error instanceof Error ? error.message : String(error)}`);
+		// Print error to stderr with Error: prefix
+		console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
 		process.exit(1);
 	}
 }
