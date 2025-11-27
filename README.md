@@ -7,6 +7,52 @@
 
 Convert AWS CDK `outputs.json` to shell-sourceable export file. Provides both CLI tool and programmatic API with dual ESM/CJS support.
 
+## Quick Start
+
+Typical workflow with AWS CDK (TypeScript):
+
+```typescript
+// lib/my-stack.ts
+import * as cdk from "aws-cdk-lib";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as apigateway from "aws-cdk-lib/aws-apigateway";
+
+export class MyStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const bucket = new s3.Bucket(this, "MyBucket");
+    const api = new apigateway.RestApi(this, "MyApi");
+
+    // Export values as CDK outputs
+    new cdk.CfnOutput(this, "BucketName", {
+      value: bucket.bucketName,
+      description: "S3 Bucket Name",
+    });
+
+    new cdk.CfnOutput(this, "ApiEndpoint", {
+      value: api.url,
+      description: "API Gateway Endpoint",
+    });
+  }
+}
+```
+
+```bash
+# 1. Deploy CDK stack and save outputs
+cdk deploy --outputs-file var/outputs.json
+
+# 2. Convert outputs to shell format
+npx @heiwa4126/cdk2env
+
+# 3. Load environment variables
+source var/outputs.sh
+
+# 4. Use in your scripts
+aws s3 ls s3://$CDK_MYSTACK_BUCKETNAME
+curl $CDK_MYSTACK_APIENDPOINT
+```
+
 ## Features
 
 - 🚀 **CLI & Library**: Use as a command-line tool or programmatic API
@@ -53,6 +99,19 @@ cdk2env --help
 
 # Show version
 cdk2env --version
+```
+
+#### Using with npx/pnpx (without installation)
+
+```bash
+# Run directly with npx
+npx @heiwa4126/cdk2env
+
+# Or with pnpm
+pnpx @heiwa4126/cdk2env
+
+# With custom paths
+npx @heiwa4126/cdk2env path/to/outputs.json path/to/exports.sh
 ```
 
 ### Library API
