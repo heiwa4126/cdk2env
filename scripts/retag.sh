@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
+#
+# 最新のGitタグを削除して、現在のHEADに同じタグを再作成・プッシュします。
+# ワークフローのバグ修正時にバージョン番号を上げずに再実行するために使用します。
+#
 # 使用方法:
 #   1. ワークフローを修正してコミット:
 #      git add .github/workflows/publish.yml
 #      git commit -m "fix: workflow修正"
 #   2. このスクリプトを実行:
 #      npm run retag
-#
-# 最新のGitタグを削除して、現在のHEADに同じタグを再作成・プッシュします。
-# ワークフローのバグ修正時にバージョン番号を上げずに再実行するために使用します。
 
 set -euo pipefail
 
