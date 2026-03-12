@@ -1,6 +1,13 @@
 {
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"root": true,
-	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "off"
+			}
+		}
+	},
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -8,7 +15,8 @@
 		"root": "."
 	},
 	"files": {
-		"ignoreUnknown": true
+		"ignoreUnknown": true,
+		"includes": ["**", "!**/*.html", "!**/*.htm", "!test/fixtures/invalid.json"]
 	},
 	"json": {
 		"parser": {
@@ -37,12 +45,5 @@
 	"formatter": {
 		"enabled": true,
 		"lineWidth": 100
-	},
-	"overrides": [
-		{
-			"includes": ["test/fixtures/invalid.json"],
-			"linter": { "enabled": false },
-			"formatter": { "enabled": false }
-		}
-	]
+	}
 }

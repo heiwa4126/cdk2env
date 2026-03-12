@@ -27,14 +27,16 @@
 		"test:run": "vitest run",
 		"test:watch": "vitest",
 		"clean": "rm -rf dist",
-		"prepublishOnly": "pnpm run lint && pnpm run test && pnpm run clean && pnpm run build && pnpm run smoke-test",
+		"prepublishOnly": "run-s lint test clean build smoke-test",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
-		"format:full": "pnpm pkg fix && biome format --write . && dprint fmt && textlint --fix \"**/*.md\"",
+		"format:all": "pnpm pkg fix --loglevel=error && biome format --write . && dprint fmt && textlint --fix \"**/*.md\"",
 		"smoke-test": "node examples/ex1.mjs && node examples/ex2.cjs && tsx examples/ex3.ts && node dist/main.js test/fixtures/sample1.json test/temp/smoke.sh",
 		"retag": "bash scripts/retag.sh",
 		"prepack": "clean-publish-scripts -c",
-		"postpack": "clean-publish-scripts -r"
+		"postpack": "clean-publish-scripts -r",
+		"osv-scan": "osv-scanner .",
+		"g": "run-s prepublishOnly format:all osv-scan"
 	},
 	"keywords": [
 		"aws-cdk",
@@ -60,13 +62,14 @@
 	"homepage": "https://github.com/heiwa4126/cdk2env#readme",
 	"license": "MIT",
 	"devDependencies": {
-		"@biomejs/biome": "^2.3.7",
+		"@biomejs/biome": "^2.4.6",
 		"@heiwa4126/clean-publish-scripts": "^0.0.4",
-		"@types/node": "^25.0.3",
+		"@types/node": "^25.4.0",
 		"tsup": "^8.5.1",
-		"tsx": "^4.20.6",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
-		"vitest": "^4.0.14"
+		"npm-run-all2": "^8.0.4",
+		"vitest": "^4.0.18"
 	},
 	"engines": {
 		"node": ">=18.0.0"
