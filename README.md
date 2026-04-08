@@ -18,23 +18,23 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 
 export class MyStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+	constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+		super(scope, id, props);
 
-    const bucket = new s3.Bucket(this, "MyBucket");
-    const api = new apigateway.RestApi(this, "MyApi");
+		const bucket = new s3.Bucket(this, "MyBucket");
+		const api = new apigateway.RestApi(this, "MyApi");
 
-    // Export values as CDK outputs
-    new cdk.CfnOutput(this, "BucketName", {
-      value: bucket.bucketName,
-      description: "S3 Bucket Name",
-    });
+		// Export values as CDK outputs
+		new cdk.CfnOutput(this, "BucketName", {
+			value: bucket.bucketName,
+			description: "S3 Bucket Name",
+		});
 
-    new cdk.CfnOutput(this, "ApiEndpoint", {
-      value: api.url,
-      description: "API Gateway Endpoint",
-    });
-  }
+		new cdk.CfnOutput(this, "ApiEndpoint", {
+			value: api.url,
+			description: "API Gateway Endpoint",
+		});
+	}
 }
 ```
 
@@ -122,8 +122,8 @@ npx @heiwa4126/cdk2env path/to/outputs.json path/to/exports.sh
 import { convertOutputsToShell } from "@heiwa4126/cdk2env";
 
 await convertOutputsToShell({
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
 });
 ```
 
@@ -133,8 +133,8 @@ await convertOutputsToShell({
 const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 
 await convertOutputsToShell({
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
 });
 ```
 
@@ -144,9 +144,9 @@ await convertOutputsToShell({
 import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
 
 const options: ConvertOptions = {
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
-  prefix: "APP_", // Custom prefix (default: 'CDK_')
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
+	prefix: "APP_", // Custom prefix (default: 'CDK_')
 };
 
 await convertOutputsToShell(options);
@@ -175,10 +175,10 @@ curl $CDK_MYSTACK_APIENDPOINT/health
 
 ```json
 {
-  "MyStack": {
-    "ApiEndpoint": "https://abc123.execute-api.us-east-1.amazonaws.com",
-    "BucketName": "my-bucket-abc123"
-  }
+	"MyStack": {
+		"ApiEndpoint": "https://abc123.execute-api.us-east-1.amazonaws.com",
+		"BucketName": "my-bucket-abc123"
+	}
 }
 ```
 

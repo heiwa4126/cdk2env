@@ -135,9 +135,9 @@ npm の該当プロジェクトの setting の Publishing access で
 
 ```json
 {
-  "scripts": {
-    "prepublishOnly": "node scripts/check-ci.js"
-  }
+	"scripts": {
+		"prepublishOnly": "node scripts/check-ci.js"
+	}
 }
 ```
 
@@ -146,10 +146,10 @@ npm の該当プロジェクトの setting の Publishing access で
 ```js
 // scripts/check-ci.js
 if (!process.env.CI && !process.env.GITHUB_ACTIONS) {
-  console.error("⛔ Local publish is disabled. Please use GitHub Actions (Trusted publishing).");
-  process.exit(1);
+	console.error("⛔ Local publish is disabled. Please use GitHub Actions (Trusted publishing).");
+	process.exit(1);
 } else {
-  console.log("✅ CI環境からの publish を検出しました。続行します。");
+	console.log("✅ CI環境からの publish を検出しました。続行します。");
 }
 ```
 

@@ -59,10 +59,10 @@ cdk2env -V
 
 ```json
 {
-  "scripts": {
-    "cdk:outputs": "cdk2env",
-    "cdk:outputs:custom": "cdk2env cdk.out/outputs.json env.sh"
-  }
+	"scripts": {
+		"cdk:outputs": "cdk2env",
+		"cdk:outputs:custom": "cdk2env cdk.out/outputs.json env.sh"
+	}
 }
 ```
 
@@ -112,14 +112,14 @@ echo $CDK_STACKNAME_OUTPUTKEY
 
 ```json
 {
-  "MyStack": {
-    "ApiEndpoint": "https://abc123.execute-api.us-east-1.amazonaws.com",
-    "BucketName": "my-bucket-abc123",
-    "FunctionArn": "arn:aws:lambda:us-east-1:123456789012:function:my-func"
-  },
-  "AnotherStack": {
-    "DatabaseUrl": "postgres://user:pass@host:5432/db"
-  }
+	"MyStack": {
+		"ApiEndpoint": "https://abc123.execute-api.us-east-1.amazonaws.com",
+		"BucketName": "my-bucket-abc123",
+		"FunctionArn": "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+	},
+	"AnotherStack": {
+		"DatabaseUrl": "postgres://user:pass@host:5432/db"
+	}
 }
 ```
 
@@ -297,50 +297,59 @@ Error: Failed to write output: permission denied
 
 ```json
 {
-  "name": "@heiwa4126/cdk2env",
-  "version": "1.0.0",
-  "description": "Convert AWS CDK outputs.json to shell-sourceable export file",
-  "type": "module",
-  "bin": {
-    "cdk2env": "./dist/main.js"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "files": ["dist/", "README.md", "LICENSE"],
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "keywords": ["aws-cdk", "cdk", "outputs", "shell", "bash", "export", "environment-variables", "cli"],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heiwa4126/cdk2env.git"
-  },
-  "bugs": {
-    "url": "https://github.com/heiwa4126/cdk2env/issues"
-  },
-  "homepage": "https://github.com/heiwa4126/cdk2env#readme",
-  "author": "heiwa4126",
-  "license": "MIT",
-  "scripts": {
-    "build": "tsup",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "prepublishOnly": "npm run build && npm test"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "latest",
-    "@types/node": "^20.0.0",
-    "tsup": "latest",
-    "typescript": "latest",
-    "vitest": "latest"
-  }
+	"name": "@heiwa4126/cdk2env",
+	"version": "1.0.0",
+	"description": "Convert AWS CDK outputs.json to shell-sourceable export file",
+	"type": "module",
+	"bin": {
+		"cdk2env": "./dist/main.js"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"files": ["dist/", "README.md", "LICENSE"],
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"keywords": [
+		"aws-cdk",
+		"cdk",
+		"outputs",
+		"shell",
+		"bash",
+		"export",
+		"environment-variables",
+		"cli"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/heiwa4126/cdk2env.git"
+	},
+	"bugs": {
+		"url": "https://github.com/heiwa4126/cdk2env/issues"
+	},
+	"homepage": "https://github.com/heiwa4126/cdk2env#readme",
+	"author": "heiwa4126",
+	"license": "MIT",
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"prepublishOnly": "npm run build && npm test"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "latest",
+		"@types/node": "^20.0.0",
+		"tsup": "latest",
+		"typescript": "latest",
+		"vitest": "latest"
+	}
 }
 ```
 
@@ -348,28 +357,28 @@ Error: Failed to write output: permission denied
 
 ```jsonc
 {
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "noParameterAssign": "error",
-        "useAsConstAssertion": "error"
-        // その他のルール...
-      }
-    }
-  },
-  "formatter": {
-    "enabled": true,
-    "lineWidth": 100
-  },
-  "overrides": [
-    {
-      "includes": ["test/fixtures/invalid.json"],
-      "linter": { "enabled": false },
-      "formatter": { "enabled": false }
-    }
-  ]
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"style": {
+				"noParameterAssign": "error",
+				"useAsConstAssertion": "error",
+				// その他のルール...
+			},
+		},
+	},
+	"formatter": {
+		"enabled": true,
+		"lineWidth": 100,
+	},
+	"overrides": [
+		{
+			"includes": ["test/fixtures/invalid.json"],
+			"linter": { "enabled": false },
+			"formatter": { "enabled": false },
+		},
+	],
 }
 ```
 
@@ -381,17 +390,17 @@ Error: Failed to write output: permission denied
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: {
-    main: "src/main.ts", // CLI
-    index: "src/index.ts", // Library API
-  },
-  format: ["esm", "cjs"], // ESM + CommonJS
-  dts: true, // 型定義生成
-  clean: true, // ビルド前にdist/をクリア
-  sourcemap: true,
-  splitting: false,
-  treeshake: true,
-  outDir: "dist",
+	entry: {
+		main: "src/main.ts", // CLI
+		index: "src/index.ts", // Library API
+	},
+	format: ["esm", "cjs"], // ESM + CommonJS
+	dts: true, // 型定義生成
+	clean: true, // ビルド前にdist/をクリア
+	sourcemap: true,
+	splitting: false,
+	treeshake: true,
+	outDir: "dist",
 });
 ```
 
@@ -399,18 +408,18 @@ export default defineConfig({
 
 ```json
 {
-  "compilerOptions": {
-    "module": "nodenext", // 最新のNode.jsモジュール解決
-    "moduleResolution": "nodenext",
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true, // JSONファイルをimport可能に
-    "outDir": "./dist",
-    "rootDir": "./src"
-  }
+	"compilerOptions": {
+		"module": "nodenext", // 最新のNode.jsモジュール解決
+		"moduleResolution": "nodenext",
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true, // JSONファイルをimport可能に
+		"outDir": "./dist",
+		"rootDir": "./src"
+	}
 }
 ```
 
@@ -425,15 +434,15 @@ import { convertOutputsToShell } from "@heiwa4126/cdk2env";
 
 // 基本的な使用例
 await convertOutputsToShell({
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
 });
 
 // カスタムプレフィックス
 await convertOutputsToShell({
-  inputPath: "custom/path.json",
-  outputPath: "custom/output.sh",
-  prefix: "APP_", // デフォルト: 'CDK_'
+	inputPath: "custom/path.json",
+	outputPath: "custom/output.sh",
+	prefix: "APP_", // デフォルト: 'CDK_'
 });
 ```
 
@@ -446,8 +455,8 @@ const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 
 // 使用例
 await convertOutputsToShell({
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
 });
 ```
 
@@ -457,17 +466,17 @@ await convertOutputsToShell({
 import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
 
 const options: ConvertOptions = {
-  inputPath: "var/outputs.json",
-  outputPath: "var/outputs.sh",
-  prefix: "CDK_",
+	inputPath: "var/outputs.json",
+	outputPath: "var/outputs.sh",
+	prefix: "CDK_",
 };
 
 try {
-  await convertOutputsToShell(options);
-  console.log("Conversion successful");
+	await convertOutputsToShell(options);
+	console.log("Conversion successful");
 } catch (error) {
-  console.error("Conversion failed:", error.message);
-  process.exit(1);
+	console.error("Conversion failed:", error.message);
+	process.exit(1);
 }
 ```
 
@@ -475,12 +484,12 @@ try {
 
 ```typescript
 export interface ConvertOptions {
-  /** 入力JSONファイルのパス */
-  inputPath: string;
-  /** 出力シェルファイルのパス */
-  outputPath: string;
-  /** 環境変数のプレフィックス (デフォルト: 'CDK_') */
-  prefix?: string;
+	/** 入力JSONファイルのパス */
+	inputPath: string;
+	/** 出力シェルファイルのパス */
+	outputPath: string;
+	/** 環境変数のプレフィックス (デフォルト: 'CDK_') */
+	prefix?: string;
 }
 
 /**
@@ -495,20 +504,17 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 ### テストケース
 
 1. **正常系**
-
    - 標準的な CDK outputs の変換
    - 複数スタックの処理
    - 空のスタック出力
 
 2. **特殊文字処理**
-
    - シングルクォートを含む値
    - ダブルクォートを含む値
    - シェル特殊文字 (`$`, `` ` ``, `\`, など)
    - 改行文字
 
 3. **エラー系**
-
    - 存在しないファイル
    - 無効な JSON (`test/fixtures/invalid.json` - 意図的に不正な構文)
    - 不正な JSON 構造(配列など)
@@ -538,13 +544,13 @@ export function convertOutputsToShell(options: ConvertOptions): Promise<void>;
 
 ```json
 {
-  "devDependencies": {
-    "@biomejs/biome": "latest",
-    "@types/node": "^20.0.0",
-    "tsup": "latest",
-    "typescript": "latest",
-    "vitest": "latest"
-  }
+	"devDependencies": {
+		"@biomejs/biome": "latest",
+		"@types/node": "^20.0.0",
+		"tsup": "latest",
+		"typescript": "latest",
+		"vitest": "latest"
+	}
 }
 ```
 

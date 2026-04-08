@@ -11,5 +11,5 @@
 	"arrowParens": "always",
 	"bracketSameLine": false,
 	"bracketSpacing": true,
-	// "ignorePatterns": ["**/*.html", "**/*.htm", "**/*.css"]
+	"ignorePatterns": ["test/fixtures/invalid.json"], // Ignore invalid JSON fixture file
 }
