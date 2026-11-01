@@ -67,10 +67,10 @@
 		"@heiwa4126/clean-publish-scripts": "^0.0.6",
 		"@types/node": "^26.1.0",
 		"npm-run-all2": "^9.0.2",
-		"oxfmt": "^0.70.0",
+		"oxfmt": "^0.74.0",
 		"oxlint": "^1.72.0",
 		"tsdown": "^0.23.0",
-		"tsup": "^8.5.1",
+		"tsup": "^9.0.0",
 		"tsx": "^4.23.0",
 		"typescript": "^7.0.2",
 		"vitest": "^5.0.1"
