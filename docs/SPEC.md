@@ -363,22 +363,22 @@ Error: Failed to write output: permission denied
 			"recommended": true,
 			"style": {
 				"noParameterAssign": "error",
-				"useAsConstAssertion": "error",
+				"useAsConstAssertion": "error"
 				// その他のルール...
-			},
-		},
+			}
+		}
 	},
 	"formatter": {
 		"enabled": true,
-		"lineWidth": 100,
+		"lineWidth": 100
 	},
 	"overrides": [
 		{
 			"includes": ["test/fixtures/invalid.json"],
 			"linter": { "enabled": false },
-			"formatter": { "enabled": false },
-		},
-	],
+			"formatter": { "enabled": false }
+		}
+	]
 }
 ```
 
@@ -392,7 +392,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
 	entry: {
 		main: "src/main.ts", // CLI
-		index: "src/index.ts", // Library API
+		index: "src/index.ts" // Library API
 	},
 	format: ["esm", "cjs"], // ESM + CommonJS
 	dts: true, // 型定義生成
@@ -400,7 +400,7 @@ export default defineConfig({
 	sourcemap: true,
 	splitting: false,
 	treeshake: true,
-	outDir: "dist",
+	outDir: "dist"
 });
 ```
 
@@ -435,14 +435,14 @@ import { convertOutputsToShell } from "@heiwa4126/cdk2env";
 // 基本的な使用例
 await convertOutputsToShell({
 	inputPath: "var/outputs.json",
-	outputPath: "var/outputs.sh",
+	outputPath: "var/outputs.sh"
 });
 
 // カスタムプレフィックス
 await convertOutputsToShell({
 	inputPath: "custom/path.json",
 	outputPath: "custom/output.sh",
-	prefix: "APP_", // デフォルト: 'CDK_'
+	prefix: "APP_" // デフォルト: 'CDK_'
 });
 ```
 
@@ -456,7 +456,7 @@ const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 // 使用例
 await convertOutputsToShell({
 	inputPath: "var/outputs.json",
-	outputPath: "var/outputs.sh",
+	outputPath: "var/outputs.sh"
 });
 ```
 
@@ -468,7 +468,7 @@ import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
 const options: ConvertOptions = {
 	inputPath: "var/outputs.json",
 	outputPath: "var/outputs.sh",
-	prefix: "CDK_",
+	prefix: "CDK_"
 };
 
 try {

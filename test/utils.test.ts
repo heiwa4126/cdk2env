@@ -54,7 +54,7 @@ describe("generateVariableName", () => {
 
 	it("should handle special characters in stack and key names", () => {
 		expect(generateVariableName("my-stack-dev", "bucket.name")).toBe(
-			"CDK_MY_STACK_DEV_BUCKET_NAME",
+			"CDK_MY_STACK_DEV_BUCKET_NAME"
 		);
 	});
 

@@ -3,7 +3,7 @@ import { defineConfig } from "tsup";
 export default defineConfig({
 	entry: {
 		main: "src/main.ts", // CLI
-		index: "src/index.ts", // Library API
+		index: "src/index.ts" // Library API
 	},
 	format: ["esm", "cjs"], // ESM + CommonJS
 	dts: true, // Generate type definitions
@@ -11,5 +11,5 @@ export default defineConfig({
 	sourcemap: true,
 	splitting: false,
 	treeshake: true,
-	outDir: "dist",
+	outDir: "dist"
 });

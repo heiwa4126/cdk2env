@@ -44,7 +44,7 @@ export async function convertOutputsToShell(options: ConvertOptions): Promise<vo
 			throw new Error(`Input JSON not found: ${inputPath}`);
 		}
 		throw new Error(
-			`Failed to read input: ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to read input: ${error instanceof Error ? error.message : String(error)}`
 		);
 	}
 
@@ -67,7 +67,7 @@ export async function convertOutputsToShell(options: ConvertOptions): Promise<vo
 		"# Auto-generated from CDK outputs.json. Do not edit manually.",
 		"# Source this file:",
 		`#   source ${outputPath}`,
-		"",
+		""
 	];
 
 	for (const [stackName, stackOutputs] of Object.entries(outputs)) {
@@ -92,7 +92,7 @@ export async function convertOutputsToShell(options: ConvertOptions): Promise<vo
 		await writeFile(outputPath, shellContent, "utf-8");
 	} catch (error) {
 		throw new Error(
-			`Failed to write output: ${error instanceof Error ? error.message : String(error)}`,
+			`Failed to write output: ${error instanceof Error ? error.message : String(error)}`
 		);
 	}
 }

@@ -16,12 +16,12 @@ async function main() {
 		JSON.stringify(
 			{
 				TestStack: {
-					DatabaseUrl: "postgres://localhost:5432/test",
-				},
+					DatabaseUrl: "postgres://localhost:5432/test"
+				}
 			},
 			null,
-			2,
-		),
+			2
+		)
 	);
 
 	// Convert

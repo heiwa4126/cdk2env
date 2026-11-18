@@ -43,7 +43,7 @@ export function escapeShellValue(value: string): string {
 export function generateVariableName(
 	stackName: string,
 	outputKey: string,
-	prefix = "CDK_",
+	prefix = "CDK_"
 ): string {
 	return `${prefix}${sanitizeVariableName(stackName)}_${sanitizeVariableName(outputKey)}`;
 }

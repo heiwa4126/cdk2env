@@ -10,7 +10,7 @@ export default defineConfig([
 		clean: true,
 		entry: [
 			"src/main.ts", // CLI
-			"src/index.ts", // Library API
+			"src/index.ts" // Library API
 		],
 		format: ["esm", "cjs"],
 		outDir: "dist",
@@ -18,6 +18,6 @@ export default defineConfig([
 		sourcemap: false,
 		minify: false,
 		dts: true,
-		outExtensions: fixCjsExtension,
-	},
+		outExtensions: fixCjsExtension
+	}
 ]);

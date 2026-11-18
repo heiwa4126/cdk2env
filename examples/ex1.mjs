@@ -17,12 +17,12 @@ await writeFile(
 		{
 			MyStack: {
 				ApiEndpoint: "https://example.com/api",
-				BucketName: "my-bucket",
-			},
+				BucketName: "my-bucket"
+			}
 		},
 		null,
-		2,
-	),
+		2
+	)
 );
 
 // Convert

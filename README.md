@@ -27,12 +27,12 @@ export class MyStack extends cdk.Stack {
 		// Export values as CDK outputs
 		new cdk.CfnOutput(this, "BucketName", {
 			value: bucket.bucketName,
-			description: "S3 Bucket Name",
+			description: "S3 Bucket Name"
 		});
 
 		new cdk.CfnOutput(this, "ApiEndpoint", {
 			value: api.url,
-			description: "API Gateway Endpoint",
+			description: "API Gateway Endpoint"
 		});
 	}
 }
@@ -123,7 +123,7 @@ import { convertOutputsToShell } from "@heiwa4126/cdk2env";
 
 await convertOutputsToShell({
 	inputPath: "var/outputs.json",
-	outputPath: "var/outputs.sh",
+	outputPath: "var/outputs.sh"
 });
 ```
 
@@ -134,7 +134,7 @@ const { convertOutputsToShell } = require("@heiwa4126/cdk2env");
 
 await convertOutputsToShell({
 	inputPath: "var/outputs.json",
-	outputPath: "var/outputs.sh",
+	outputPath: "var/outputs.sh"
 });
 ```
 
@@ -146,7 +146,7 @@ import { convertOutputsToShell, type ConvertOptions } from "@heiwa4126/cdk2env";
 const options: ConvertOptions = {
 	inputPath: "var/outputs.json",
 	outputPath: "var/outputs.sh",
-	prefix: "APP_", // Custom prefix (default: 'CDK_')
+	prefix: "APP_" // Custom prefix (default: 'CDK_')
 };
 
 await convertOutputsToShell(options);

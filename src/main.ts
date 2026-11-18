@@ -30,7 +30,7 @@ Examples:
   cdk2env
   cdk2env path/to/outputs.json
   cdk2env path/to/outputs.json path/to/exports.sh
-`.trim(),
+`.trim()
 	);
 }
 
@@ -83,7 +83,7 @@ async function main(): Promise<void> {
 	try {
 		await convertOutputsToShell({
 			inputPath: absoluteInputPath,
-			outputPath: absoluteOutputPath,
+			outputPath: absoluteOutputPath
 		});
 		// Silent on success - no output
 		process.exit(0);

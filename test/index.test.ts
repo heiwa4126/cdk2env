@@ -39,14 +39,14 @@ describe("convertOutputsToShell", () => {
 
 		expect(output).toContain("#!/usr/bin/env bash");
 		expect(output).toContain(
-			"export CDK_MYSTACK_APIENDPOINT='https://abc123.execute-api.us-east-1.amazonaws.com'",
+			"export CDK_MYSTACK_APIENDPOINT='https://abc123.execute-api.us-east-1.amazonaws.com'"
 		);
 		expect(output).toContain("export CDK_MYSTACK_BUCKETNAME='my-bucket-abc123'");
 		expect(output).toContain(
-			"export CDK_MYSTACK_FUNCTIONARN='arn:aws:lambda:us-east-1:123456789012:function:my-func'",
+			"export CDK_MYSTACK_FUNCTIONARN='arn:aws:lambda:us-east-1:123456789012:function:my-func'"
 		);
 		expect(output).toContain(
-			"export CDK_ANOTHERSTACK_DATABASEURL='postgres://user:pass@host:5432/db'",
+			"export CDK_ANOTHERSTACK_DATABASEURL='postgres://user:pass@host:5432/db'"
 		);
 	});
 
@@ -100,7 +100,7 @@ describe("convertOutputsToShell", () => {
 		const outputPath = join(TEMP_DIR, "output.sh");
 
 		await expect(convertOutputsToShell({ inputPath, outputPath })).rejects.toThrow(
-			"Input JSON not found:",
+			"Input JSON not found:"
 		);
 	});
 
@@ -118,7 +118,7 @@ describe("convertOutputsToShell", () => {
 		await writeFile(inputPath, "[]", "utf-8");
 
 		await expect(convertOutputsToShell({ inputPath, outputPath })).rejects.toThrow(
-			"Unexpected JSON root structure",
+			"Unexpected JSON root structure"
 		);
 	});
 });

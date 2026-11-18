@@ -18,19 +18,19 @@ async function main(): Promise<void> {
 			{
 				ProdStack: {
 					AppUrl: "https://prod.example.com",
-					Version: "1.0.0",
-				},
+					Version: "1.0.0"
+				}
 			},
 			null,
-			2,
-		),
+			2
+		)
 	);
 
 	// Convert with type-safe options
 	const options: ConvertOptions = {
 		inputPath,
 		outputPath,
-		prefix: "APP_", // Custom prefix
+		prefix: "APP_" // Custom prefix
 	};
 
 	try {
